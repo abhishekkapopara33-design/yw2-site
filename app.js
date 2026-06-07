@@ -417,10 +417,22 @@
         });
 
         if (response.ok) {
-          // Show success
+          // Show success and hide form
+          form.reset(); // clear all fields
           form.setAttribute('hidden', '');
           successEl.removeAttribute('hidden');
           successEl.focus();
+
+          // Reset button listener
+          const resetBtn = document.getElementById('form-reset-btn');
+          if (resetBtn) {
+            resetBtn.onclick = function () {
+              successEl.setAttribute('hidden', '');
+              form.removeAttribute('hidden');
+              submitBtn.disabled = false;
+              submitBtn.textContent = 'Get My Free SEO Audit';
+            };
+          }
         } else {
           throw new Error('Server returned an error');
         }
