@@ -1,0 +1,14 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<svg xmlns="http://www.w3.org/2000/svg" version="1.2" viewBox="0 0 826 694" width="75" height="75">
+<title>Logo (1)</title>
+	<style>
+		.s0 { fill: #ff9000;stroke: #0000ff;stroke-miterlimit:100;stroke-width: 15 } 
+		.s1 { fill: #0000ff;stroke: #0000ff;stroke-miterlimit:100;stroke-width: 10 } 
+		.s2 { fill: #ffc300;stroke: #ff9000;stroke-miterlimit:100;stroke-width: 10 } 
+		.s3 { fill: #ff9000 } 
+	</style>
+	<path id="Layer 1" style="fill:transparent;" class="s0 draw-path" d="m401 653c-188.57 0-341-142.15-341-318 0-175.85 152.43-318 341-318 188.57 0 341 142.15 341 318 0 175.85-152.43 318-341 318z" pathLength="1" stroke-linecap="round"/>
+	<path id="Layer 3" class="s1 draw-path" d="m399.92 326.64l-5-0.09 5.49-312.31 5 0.09zm1.25-195.25l3.49-3.58 136.59 133.16-3.49 3.58zm-141.85 265.55l-5-0.01 0.47-188.61 5 0.01zm-3.71-186.76l3.35-3.71 138.52 125.35-3.35 3.71z" pathLength="1" stroke-linecap="round"/>
+	<path id="Layer 4" class="s2 draw-path" d="m396.29 335.31l5-0.05 2.86 305.36-5 0.05zm-140.29 67l3.12-3.91 140.52 111.92-3.12 3.91zm143.06-63.26l3.04-3.97 150.18 115.14-3.05 3.96zm154.2 113.1l-5 0.11-3.93-188.8 5-0.1z" pathLength="1" stroke-linecap="round"/>
+	<path id="Layer 6" fill-rule="evenodd" class="s3 draw-path" d="m137.56 456.9l-2.09-4.54 529.51-243.42 2.09 4.54z" pathLength="1" stroke-linecap="round"/>
+</svg>
