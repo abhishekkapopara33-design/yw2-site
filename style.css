@@ -554,7 +554,9 @@ input, select, textarea { font-family: inherit; }
    ============================================================ */
 .hero {
   padding-top: calc(var(--header-h) + var(--space-16));
-  padding-bottom: var(--space-24);
+  /* increased bottom padding to ensure following content isn't covered by the hero/video */
+  /* make a larger bottom gap (var(--space-32) + var(--space-20) = 8rem + 5rem = 13rem) */
+  padding-bottom: calc(var(--space-32) + var(--space-20));
   background: var(--gradient-hero);
   position: relative;
   overflow: hidden;
@@ -575,6 +577,8 @@ input, select, textarea { font-family: inherit; }
   width: 100%;
   height: 100%;
   object-fit: cover;
+  /* ensure visually important content at the bottom of the video remains visible */
+  object-position: center bottom;
   position: absolute;
   top: 0;
   left: 0;
@@ -711,7 +715,39 @@ input, select, textarea { font-family: inherit; }
   display: flex;
   justify-content: center;
   align-items: center;
-  min-height: 500px;
+  /* make the visual area taller so the phone mockup and video bottom area have more breathing room */
+  min-height: 800px;
+}
+
+/* Keep the video as a true background on mobile too.
+   Do NOT make .hero__bg-video position: relative; that lets the video affect
+   layout and can cause the following page sections to cover the video text. */
+@media (max-width: 991px) {
+  .hero {
+    min-height: 100svh;
+    padding-bottom: clamp(10rem, 24vh, 16rem);
+  }
+
+  .hero__visual {
+    min-height: 420px;
+  }
+
+  .hero__bg-video {
+    position: absolute;
+    inset: 0;
+    height: 100%;
+    overflow: hidden;
+  }
+
+  .hero__bg-video video {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center bottom;
+    z-index: -2;
+  }
 }
 
 .hero__phone-mockup {
@@ -2066,8 +2102,8 @@ input, select, textarea { font-family: inherit; }
 
   .hero {
     padding-top: calc(var(--header-h) + var(--space-8));
-    min-height: auto;
-    padding-bottom: var(--space-16);
+    min-height: 100svh;
+    padding-bottom: clamp(10rem, 28vh, 18rem);
   }
 
   .hero__headline { font-size: var(--font-size-3xl); }
