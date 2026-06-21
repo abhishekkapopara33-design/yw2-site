@@ -1,5 +1,5 @@
 /* ============================================================
-   LOCALRANK PRO — style.css
+   YW2 LLC — global styles
    Design System → Components → Layout → Sections → Responsive
    ============================================================ */
 
@@ -202,6 +202,11 @@ input, select, textarea { font-family: inherit; }
 .btn--sm  { padding: var(--space-2) var(--space-5); font-size: var(--font-size-sm); }
 .btn--lg  { padding: var(--space-4) var(--space-8); font-size: var(--font-size-md); }
 .btn--full { width: 100%; }
+
+#form-reset-btn {
+  margin-top: 1.5rem;
+  padding: var(--space-3) var(--space-6);
+}
 
 /* ============================================================
    4. SECTION ATOMS (tag, title, sub)
@@ -2246,5 +2251,14 @@ input, select, textarea { font-family: inherit; }
 .offer-modal__btn {
   width: 100%;
   padding-block: var(--space-4);
+  padding-inline: var(--space-8);
   font-size: var(--font-size-md);
+}
+
+
+/* Astro migration utilities */
+.hero__bg-video video:not([src]) { opacity: 0; }
+.hero__bg-video video[src] { opacity: 1; transition: opacity 300ms ease; }
+@media (prefers-reduced-motion: reduce) {
+  .hero__bg-video video { display: none; }
 }

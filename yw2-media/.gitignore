@@ -1,0 +1,4 @@
+# AWS/SAM
+.aws-sam
+samconfig.toml
+samconfig.*.toml

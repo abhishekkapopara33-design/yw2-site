@@ -1,0 +1,114 @@
+<header class="site-header" id="navbar" role="banner">
+<div class="navbar">
+<div class="container navbar__inner">
+<!-- Logo -->
+<a aria-label="YW2 — Your Web Your Way" class="navbar__logo" href="#hero">
+<div aria-hidden="true" class="logo-icon">
+<img alt="YW2 Logo" height="42" src="./favicon.svg" style="display:block;" width="42"/>
+</div>
+<div class="logo-text">
+<span class="logo-brand">YW2</span>
+<span class="logo-tagline">Your Web Your Way</span>
+</div>
+</a>
+<!-- Primary nav links -->
+<nav aria-label="Primary navigation" class="navbar__nav" id="primary-nav">
+<ul class="navbar__links" role="list">
+<li><a class="nav-link" href="#services">Services</a></li>
+<li><a class="nav-link" href="#process">Process</a></li>
+<li><a class="nav-link" href="#pricing">Pricing</a></li>
+<li><a class="nav-link" href="#faq">FAQ</a></li>
+</ul>
+<!-- Mobile-only actions (Phone + CTA inside the hamburger menu) -->
+<div class="mobile-nav-actions">
+<a aria-label="Call YW2" class="navbar__phone" href="tel:+15182271040">
+<span aria-hidden="true" class="phone-icon-wrap">
+<svg fill="none" height="14" viewBox="0 0 14 14" width="14">
+<path d="M11.76 9.33l-1.8-.2a1.4 1.4 0 00-1.15.4L7.53 10.8A10.5 10.5 0 013.2 6.47l1.28-1.29a1.4 1.4 0 00.4-1.15l-.21-1.79A1.4 1.4 0 003.28.83H1.97C1.27.83.69 1.41.73 2.11a11.9 11.9 0 0011.16 11.16c.7.04 1.28-.54 1.28-1.24v-1.3a1.4 1.4 0 00-1.41-1.4z" fill="currentColor"></path>
+</svg>
+</span>
+<span class="phone-text">(518) 227-1040</span>
+</a>
+<a class="btn btn--primary btn--nav" href="#contact">Get Free Audit</a>
+</div>
+</nav>
+<!-- Right side: phone + CTA -->
+<div class="navbar__actions">
+<!-- Phone number with call icon -->
+<a aria-label="Call YW2" class="navbar__phone" href="tel:+15182271040" id="navbar-phone">
+<span aria-hidden="true" class="phone-icon-wrap">
+<svg fill="none" height="14" viewBox="0 0 14 14" width="14">
+<path d="M11.76 9.33l-1.8-.2a1.4 1.4 0 00-1.15.4L7.53 10.8A10.5 10.5 0 013.2 6.47l1.28-1.29a1.4 1.4 0 00.4-1.15l-.21-1.79A1.4 1.4 0 003.28.83H1.97C1.27.83.69 1.41.73 2.11a11.9 11.9 0 0011.16 11.16c.7.04 1.28-.54 1.28-1.24v-1.3a1.4 1.4 0 00-1.41-1.4z" fill="currentColor"></path>
+</svg>
+</span>
+<span class="phone-text">(518) 227-1040</span>
+</a>
+<a class="btn btn--primary btn--nav" href="#contact" id="nav-cta">Get Free Audit</a>
+<button aria-controls="primary-nav" aria-expanded="false" aria-label="Toggle navigation" class="navbar__hamburger" id="hamburger-btn">
+<span class="bar"></span>
+<span class="bar"></span>
+<span class="bar"></span>
+</button>
+</div>
+</div>
+</div>
+</header>
+
+<script>
+  const siteHeader = document.querySelector<HTMLElement>('#navbar');
+  const hamburger = document.querySelector<HTMLButtonElement>('#hamburger-btn');
+  const nav = document.querySelector<HTMLElement>('#primary-nav');
+
+  if (siteHeader && hamburger && nav) {
+    const updateHeader = () => {
+      const progress = Math.min(window.scrollY / 80, 1);
+      const navbar = siteHeader.querySelector<HTMLElement>('.navbar');
+
+      if (progress >= 1) {
+        siteHeader.classList.add('scrolled');
+        navbar?.style.removeProperty('background');
+        navbar?.style.removeProperty('border-color');
+        navbar?.style.removeProperty('box-shadow');
+      } else {
+        siteHeader.classList.remove('scrolled');
+        if (navbar) {
+          navbar.style.background = `rgba(255, 255, 255, ${progress})`;
+          navbar.style.borderColor = `rgba(209, 218, 255, ${progress})`;
+          navbar.style.boxShadow = progress > 0
+            ? `0 2px ${Math.round(progress * 16)}px rgba(0, 23, 69, ${progress * 0.07})`
+            : 'none';
+        }
+      }
+
+      let currentSection = '';
+      document.querySelectorAll<HTMLElement>('section[id]').forEach((section) => {
+        if (section.getBoundingClientRect().top <= 130) currentSection = section.id;
+      });
+
+      nav.querySelectorAll<HTMLAnchorElement>('.nav-link').forEach((link) => {
+        link.classList.toggle('active', link.getAttribute('href') === `#${currentSection}`);
+      });
+    };
+
+    const closeMenu = () => {
+      siteHeader.classList.remove('nav-open');
+      hamburger.setAttribute('aria-expanded', 'false');
+    };
+
+    hamburger.addEventListener('click', () => {
+      const open = siteHeader.classList.toggle('nav-open');
+      hamburger.setAttribute('aria-expanded', String(open));
+    });
+
+    nav.querySelectorAll('.nav-link').forEach((link) => link.addEventListener('click', closeMenu));
+
+    document.addEventListener('click', (event) => {
+      if (siteHeader.classList.contains('nav-open') && !siteHeader.contains(event.target as Node)) {
+        closeMenu();
+      }
+    });
+
+    window.addEventListener('scroll', updateHeader, { passive: true });
+    updateHeader();
+  }
+</script>

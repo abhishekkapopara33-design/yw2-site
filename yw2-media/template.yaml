@@ -1,0 +1,211 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: >-
+  Private S3 origin, CloudFront distribution, and an IAM group whose members
+  can fully administer these specific resources.
+
+Parameters:
+  BucketName:
+    Type: String
+    Description: Globally unique name for the new S3 bucket.
+
+  GroupName:
+    Type: String
+    Default: s3-cloudfront-resource-admins
+    AllowedPattern: '[\w+=,.@-]+'
+    Description: Name of the IAM group to create.
+
+  IAMUserNames:
+    Type: CommaDelimitedList
+    Description: >-
+      Existing IAM user names to add to the group, separated by commas.
+      Example: alice,bob
+
+  PriceClass:
+    Type: String
+    Default: PriceClass_100
+    AllowedValues:
+      - PriceClass_100
+      - PriceClass_200
+      - PriceClass_All
+    Description: CloudFront edge-location price class.
+
+Resources:
+  ContentBucket:
+    Type: AWS::S3::Bucket
+    DeletionPolicy: Retain
+    UpdateReplacePolicy: Retain
+    Properties:
+      BucketName: !Ref BucketName
+      BucketEncryption:
+        ServerSideEncryptionConfiguration:
+          - ServerSideEncryptionByDefault:
+              SSEAlgorithm: AES256
+      OwnershipControls:
+        Rules:
+          - ObjectOwnership: BucketOwnerEnforced
+      PublicAccessBlockConfiguration:
+        BlockPublicAcls: true
+        BlockPublicPolicy: true
+        IgnorePublicAcls: true
+        RestrictPublicBuckets: true
+      VersioningConfiguration:
+        Status: Enabled
+      Tags:
+        - Key: ManagedBy
+          Value: SAM
+
+  ContentOriginAccessControl:
+    Type: AWS::CloudFront::OriginAccessControl
+    Properties:
+      OriginAccessControlConfig:
+        Name: !Sub '${AWS::StackName}-s3-oac'
+        Description: !Sub 'OAC for ${ContentBucket}'
+        OriginAccessControlOriginType: s3
+        SigningBehavior: always
+        SigningProtocol: sigv4
+
+  ContentDistribution:
+    Type: AWS::CloudFront::Distribution
+    DeletionPolicy: Retain
+    UpdateReplacePolicy: Retain
+    Properties:
+      DistributionConfig:
+        Comment: !Sub 'CloudFront distribution for ${ContentBucket}'
+        DefaultRootObject: index.html
+        Enabled: true
+        HttpVersion: http2and3
+        IPV6Enabled: true
+        PriceClass: !Ref PriceClass
+        Origins:
+          - Id: S3Origin
+            DomainName: !GetAtt ContentBucket.RegionalDomainName
+            OriginAccessControlId: !GetAtt ContentOriginAccessControl.Id
+            S3OriginConfig:
+              OriginAccessIdentity: ''
+        DefaultCacheBehavior:
+          TargetOriginId: S3Origin
+          ViewerProtocolPolicy: redirect-to-https
+          AllowedMethods:
+            - GET
+            - HEAD
+          CachedMethods:
+            - GET
+            - HEAD
+          Compress: true
+          # AWS managed policy: CachingOptimized
+          CachePolicyId: 658327ea-f89d-4fab-a63d-7e88639e58f6
+        ViewerCertificate:
+          CloudFrontDefaultCertificate: true
+      Tags:
+        - Key: ManagedBy
+          Value: SAM
+
+  ContentBucketPolicy:
+    Type: AWS::S3::BucketPolicy
+    Properties:
+      Bucket: !Ref ContentBucket
+      PolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Sid: AllowCloudFrontReadOnly
+            Effect: Allow
+            Principal:
+              Service: cloudfront.amazonaws.com
+            Action:
+              - s3:GetObject
+            Resource: !Sub '${ContentBucket.Arn}/*'
+            Condition:
+              StringEquals:
+                AWS:SourceArn: !Sub >-
+                  arn:${AWS::Partition}:cloudfront::${AWS::AccountId}:distribution/${ContentDistribution}
+
+          - Sid: DenyInsecureTransport
+            Effect: Deny
+            Principal: '*'
+            Action: s3:*
+            Resource:
+              - !GetAtt ContentBucket.Arn
+              - !Sub '${ContentBucket.Arn}/*'
+            Condition:
+              Bool:
+                aws:SecureTransport: 'false'
+
+  ResourceAdministratorsGroup:
+    Type: AWS::IAM::Group
+    Properties:
+      GroupName: !Ref GroupName
+      Path: /
+      Policies:
+        - PolicyName: ManageStackS3AndCloudFrontResources
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+              - Sid: FullAccessToThisBucket
+                Effect: Allow
+                Action:
+                  - s3:*
+                Resource:
+                  - !GetAtt ContentBucket.Arn
+                  - !Sub '${ContentBucket.Arn}/*'
+
+              # These read-only account-level actions make the S3 console usable.
+              - Sid: S3ConsoleDiscovery
+                Effect: Allow
+                Action:
+                  - s3:ListAllMyBuckets
+                  - s3:GetAccountPublicAccessBlock
+                Resource: '*'
+
+              # cloudfront:* is scoped to this distribution and this OAC.
+              # Actions that do not support resource ARNs are not granted here.
+              - Sid: FullAccessToThisDistributionAndOAC
+                Effect: Allow
+                Action:
+                  - cloudfront:*
+                Resource:
+                  - !Sub >-
+                      arn:${AWS::Partition}:cloudfront::${AWS::AccountId}:distribution/${ContentDistribution}
+                  - !Sub >-
+                      arn:${AWS::Partition}:cloudfront::${AWS::AccountId}:origin-access-control/${ContentOriginAccessControl.Id}
+
+              # CloudFront list APIs require Resource: '*'. They are read-only,
+              # but necessary for practical console navigation.
+              - Sid: CloudFrontConsoleDiscovery
+                Effect: Allow
+                Action:
+                  - cloudfront:List*
+                  - cloudfront:GetCachePolicy
+                  - cloudfront:GetCachePolicyConfig
+                  - cloudfront:GetOriginRequestPolicy
+                  - cloudfront:GetOriginRequestPolicyConfig
+                  - cloudfront:GetResponseHeadersPolicy
+                  - cloudfront:GetResponseHeadersPolicyConfig
+                Resource: '*'
+
+  AddUsersToResourceAdministratorsGroup:
+    Type: AWS::IAM::UserToGroupAddition
+    Properties:
+      GroupName: !Ref ResourceAdministratorsGroup
+      Users: !Ref IAMUserNames
+
+Outputs:
+  BucketName:
+    Description: S3 bucket name.
+    Value: !Ref ContentBucket
+
+  DistributionId:
+    Description: CloudFront distribution ID.
+    Value: !Ref ContentDistribution
+
+  DistributionDomainName:
+    Description: CloudFront domain name.
+    Value: !GetAtt ContentDistribution.DomainName
+
+  DistributionURL:
+    Description: HTTPS URL for the distribution.
+    Value: !Sub 'https://${ContentDistribution.DomainName}'
+
+  IAMGroupName:
+    Description: IAM group receiving resource administration permissions.
+    Value: !Ref ResourceAdministratorsGroup

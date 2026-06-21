@@ -1,0 +1,113 @@
+<section aria-labelledby="pricing-heading" class="section pricing" id="pricing">
+<div class="container">
+<div class="section-header">
+<span class="section-tag">Transparent Pricing</span>
+<h2 class="section-title" id="pricing-heading">Simple, Honest Plans. No Surprises.</h2>
+<p class="section-sub">Every plan includes a free audit, dedicated account manager, and monthly reporting.</p>
+</div>
+<div aria-label="Billing period selection" class="pricing__toggle" role="group">
+<button aria-pressed="true" class="toggle-btn toggle-btn--active" id="toggle-monthly">Monthly</button>
+<button aria-pressed="false" class="toggle-btn" id="toggle-yearly">Yearly <span class="toggle-save">Save 20%</span></button>
+</div>
+<div class="pricing__cards">
+<div class="pricing-card" id="plan-starter">
+<div class="pricing-card__header">
+<h3 class="pricing-card__name">Starter</h3>
+<p class="pricing-card__tagline">Perfect for new or small businesses just getting started with SEO.</p>
+</div>
+<div class="pricing-card__price">
+<span class="price-currency">$</span>
+<span class="price-amount" data-monthly="497" data-yearly="397">497</span>
+<span class="price-period">/mo</span>
+</div>
+<ul class="pricing-card__features" role="list">
+<li>✓ Local SEO Foundation</li>
+<li>✓ Google Business Profile Optimization</li>
+<li>✓ 10 Keyword Targets</li>
+<li>✓ Monthly Reporting</li>
+<li>✓ Review Request Setup</li>
+<li>✗ <span class="feature-na">AI-SEO Content</span></li>
+<li>✗ <span class="feature-na">Backlink Building</span></li>
+</ul>
+<a class="btn btn--outline btn--full" href="#contact" id="cta-starter">Get Started Free</a>
+</div>
+<div class="pricing-card pricing-card--featured" id="plan-growth">
+<div class="pricing-card__popular">Most Popular</div>
+<div class="pricing-card__header">
+<h3 class="pricing-card__name">Growth</h3>
+<p class="pricing-card__tagline">For established businesses ready to dominate their local market.</p>
+</div>
+<div class="pricing-card__price">
+<span class="price-currency">$</span>
+<span class="price-amount" data-monthly="997" data-yearly="797">997</span>
+<span class="price-period">/mo</span>
+</div>
+<ul class="pricing-card__features" role="list">
+<li>✓ Everything in Starter</li>
+<li>✓ 30 Keyword Targets</li>
+<li>✓ AI-SEO Content (4 articles/mo)</li>
+<li>✓ Citation Building</li>
+<li>✓ Backlink Outreach</li>
+<li>✓ Weekly Reporting</li>
+<li>✓ Competitor Tracking</li>
+</ul>
+<a class="btn btn--primary btn--full" href="#contact" id="cta-growth">Get Started Free</a>
+</div>
+<div class="pricing-card" id="plan-authority">
+<div class="pricing-card__header">
+<h3 class="pricing-card__name">Authority</h3>
+<p class="pricing-card__tagline">For multi-location businesses or those in highly competitive markets.</p>
+</div>
+<div class="pricing-card__price">
+<span class="price-currency">$</span>
+<span class="price-amount" data-monthly="1997" data-yearly="1597">1,997</span>
+<span class="price-period">/mo</span>
+</div>
+<ul class="pricing-card__features" role="list">
+<li>✓ Everything in Growth</li>
+<li>✓ Unlimited Keyword Targets</li>
+<li>✓ AI-SEO Content (12 articles/mo)</li>
+<li>✓ Premium Link Building</li>
+<li>✓ Multi-Location SEO</li>
+<li>✓ Dedicated SEO Strategist</li>
+<li>✓ Priority Support</li>
+</ul>
+<a class="btn btn--outline btn--full" href="#contact" id="cta-authority">Get Started Free</a>
+</div>
+</div>
+<p class="pricing__note">All plans are month-to-month. Cancel anytime. Includes free onboarding call.</p>
+</div>
+</section>
+
+<script>
+  const monthlyButton = document.querySelector<HTMLButtonElement>('#toggle-monthly');
+  const yearlyButton = document.querySelector<HTMLButtonElement>('#toggle-yearly');
+  const amounts = document.querySelectorAll<HTMLElement>('.price-amount');
+
+  const setPricingMode = (mode: 'monthly' | 'yearly') => {
+    amounts.forEach((amount) => {
+      const nextValue = amount.dataset[mode];
+      if (!nextValue) return;
+
+      amount.style.opacity = '0';
+      amount.style.transform = 'translateY(-8px)';
+      window.setTimeout(() => {
+        amount.textContent = nextValue;
+        amount.style.opacity = '1';
+        amount.style.transform = 'translateY(0)';
+      }, 150);
+    });
+
+    const monthly = mode === 'monthly';
+    monthlyButton?.classList.toggle('toggle-btn--active', monthly);
+    yearlyButton?.classList.toggle('toggle-btn--active', !monthly);
+    monthlyButton?.setAttribute('aria-pressed', String(monthly));
+    yearlyButton?.setAttribute('aria-pressed', String(!monthly));
+  };
+
+  amounts.forEach((amount) => {
+    amount.style.transition = 'opacity 150ms ease, transform 150ms ease';
+  });
+  monthlyButton?.addEventListener('click', () => setPricingMode('monthly'));
+  yearlyButton?.addEventListener('click', () => setPricingMode('yearly'));
+</script>

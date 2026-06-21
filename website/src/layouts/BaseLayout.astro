@@ -1,0 +1,162 @@
+---
+import '../styles/global.css';
+
+interface Props {
+  title?: string;
+  description?: string;
+  canonicalPath?: string;
+}
+
+const {
+  title = 'YW2 LLC | Houston IT, Web Dev & AI SEO',
+  description = 'YW2 LLC helps Houston and Pearland businesses grow with IT consulting, web development, local SEO, AI search optimization, and automation.',
+  canonicalPath = '/',
+} = Astro.props;
+
+const siteUrl = Astro.site ?? new URL('https://yw2llc.com');
+const canonicalUrl = new URL(canonicalPath, siteUrl).toString();
+const socialImageUrl = new URL('/assets/images/og-image.png', siteUrl).toString();
+const logoUrl = new URL('/assets/images/logo.png', siteUrl).toString();
+
+const structuredData = {
+  '@context': 'https://schema.org',
+  '@graph': [
+    {
+      '@type': 'Organization',
+      '@id': 'https://yw2llc.com/#organization',
+      name: 'YW2 LLC',
+      url: 'https://yw2llc.com/',
+      logo: logoUrl,
+      image: socialImageUrl,
+      slogan: 'Your Web, Your Way',
+      description: 'YW2 LLC is a veteran-owned IT consultation and development company helping local businesses improve websites, automation, SEO, AI visibility, and technical operations.',
+      foundingLocation: { '@type': 'Place', name: 'Texas' },
+      areaServed: [
+        { '@type': 'City', name: 'Houston', addressRegion: 'TX', addressCountry: 'US' },
+        { '@type': 'City', name: 'Pearland', addressRegion: 'TX', addressCountry: 'US' },
+      ],
+      knowsAbout: [
+        'IT consulting', 'Web development', 'Software development', 'Local SEO',
+        'AI search optimization', 'GEO optimization', 'Digital marketing',
+        'Custom AI solutions', 'Computer support and services', 'Small business websites',
+      ],
+    },
+    {
+      '@type': 'LocalBusiness',
+      '@id': 'https://yw2llc.com/#localbusiness',
+      name: 'YW2 LLC',
+      url: 'https://yw2llc.com/',
+      image: socialImageUrl,
+      logo: logoUrl,
+      description: 'YW2 LLC helps Houston and Pearland businesses get found online, modernize their web presence, improve Google and AI search visibility, and build practical technology solutions that save time and generate leads.',
+      slogan: 'Your Web, Your Way',
+      priceRange: '$$',
+      telephone: '+1-518-227-1040',
+      email: 'contact@yw2llc.com',
+      address: {
+        '@type': 'PostalAddress',
+        addressLocality: 'Pearland',
+        addressRegion: 'TX',
+        addressCountry: 'US',
+      },
+      areaServed: [
+        { '@type': 'City', name: 'Houston', addressRegion: 'TX', addressCountry: 'US' },
+        { '@type': 'City', name: 'Pearland', addressRegion: 'TX', addressCountry: 'US' },
+        { '@type': 'AdministrativeArea', name: 'Greater Houston Area' },
+      ],
+      serviceType: [
+        'IT Consulting', 'Web Development', 'Software Development', 'Local SEO',
+        'AI Search Optimization', 'GEO Optimization', 'Digital Marketing Services',
+        'Custom AI Solutions', 'Computer Support and Services',
+        'Small Business Website Design', 'Business Automation',
+      ],
+      parentOrganization: { '@id': 'https://yw2llc.com/#organization' },
+    },
+    {
+      '@type': 'WebSite',
+      '@id': 'https://yw2llc.com/#website',
+      url: 'https://yw2llc.com/',
+      name: 'YW2 LLC',
+      description,
+      publisher: { '@id': 'https://yw2llc.com/#organization' },
+      inLanguage: 'en-US',
+    },
+  ],
+};
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="generator" content={Astro.generator} />
+
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <meta name="author" content="YW2 LLC" />
+    <meta name="robots" content="index, follow, max-image-preview:large" />
+    <meta name="referrer" content="strict-origin-when-cross-origin" />
+    <meta name="format-detection" content="telephone=no" />
+    <meta name="theme-color" content="#ff9000" />
+    <meta name="color-scheme" content="light" />
+
+    <link rel="canonical" href={canonicalUrl} />
+    <link rel="icon" href="/favicon.ico" sizes="any" />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+
+    <meta property="og:locale" content="en_US" />
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="YW2 LLC" />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonicalUrl} />
+    <meta property="og:image" content={socialImageUrl} />
+    <meta property="og:image:secure_url" content={socialImageUrl} />
+    <meta property="og:image:type" content="image/png" />
+    <meta property="og:image:width" content="1254" />
+    <meta property="og:image:height" content="1254" />
+    <meta property="og:image:alt" content="YW2 LLC - Your Web, Your Way" />
+
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={socialImageUrl} />
+    <meta name="twitter:image:alt" content="YW2 LLC - Your Web, Your Way" />
+
+    <meta
+      http-equiv="Content-Security-Policy"
+      content="default-src 'self'; script-src 'self' 'unsafe-inline' https://www.googletagmanager.com https://www.google-analytics.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: https://www.googletagmanager.com https://www.google-analytics.com https://ssl.gstatic.com https://www.gstatic.com; media-src 'self' https://d1td79ts94gosl.cloudfront.net; connect-src 'self' https://gjtn9lelk3.execute-api.us-east-1.amazonaws.com https://www.googletagmanager.com https://www.google-analytics.com https://analytics.google.com https://region1.google-analytics.com; frame-src https://www.googletagmanager.com; object-src 'none'; base-uri 'self'; form-action 'self'; upgrade-insecure-requests;"
+    />
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap"
+      rel="stylesheet"
+    />
+
+    <script is:inline>
+      (function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+      new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+      j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+      'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+      })(window,document,'script','dataLayer','GTM-P3JMLCHD');
+    </script>
+
+    <script is:inline type="application/ld+json" set:html={JSON.stringify(structuredData)} />
+  </head>
+  <body>
+    <noscript>
+      <iframe
+        src="https://www.googletagmanager.com/ns.html?id=GTM-P3JMLCHD"
+        height="0"
+        width="0"
+        style="display:none;visibility:hidden"
+        title="Google Tag Manager"
+      ></iframe>
+    </noscript>
+    <slot />
+  </body>
+</html>

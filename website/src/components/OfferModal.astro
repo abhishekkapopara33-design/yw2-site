@@ -1,0 +1,56 @@
+<div aria-hidden="true" aria-labelledby="offer-title" class="offer-modal-overlay" id="offer-modal" inert="" role="dialog">
+<div class="offer-modal">
+<button aria-label="Close offer" class="offer-modal__close" id="offer-close-btn">
+<svg fill="none" height="24" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewBox="0 0 24 24" width="24">
+<line x1="18" x2="6" y1="6" y2="18"></line>
+<line x1="6" x2="18" y1="6" y2="18"></line>
+</svg>
+</button>
+<div class="offer-modal__content">
+<div class="offer-modal__brand">YW2</div>
+<h2 class="offer-modal__title" id="offer-title">Get a $100 Advertising Credit</h2>
+<p class="offer-modal__desc">Limited time only through 6/30/26.</p>
+<a class="btn btn--primary offer-modal__btn" href="#contact" id="offer-cta-btn">Schedule a Free Consultation</a>
+</div>
+</div>
+</div>
+
+<script>
+  const modal = document.querySelector<HTMLElement>('#offer-modal');
+  const closeButton = document.querySelector<HTMLButtonElement>('#offer-close-btn');
+  const ctaButton = document.querySelector<HTMLAnchorElement>('#offer-cta-btn');
+  const sessionKey = 'yw2_offer_seen';
+
+  if (modal && closeButton && ctaButton && !sessionStorage.getItem(sessionKey)) {
+    let previousFocus: HTMLElement | null = null;
+
+    const closeModal = ({ returnFocus = true } = {}) => {
+      if (modal.contains(document.activeElement)) (document.activeElement as HTMLElement)?.blur();
+      modal.classList.remove('is-visible');
+      modal.setAttribute('aria-hidden', 'true');
+      modal.setAttribute('inert', '');
+      sessionStorage.setItem(sessionKey, 'true');
+
+      if (returnFocus && previousFocus?.isConnected) {
+        previousFocus.focus({ preventScroll: true });
+      }
+    };
+
+    window.setTimeout(() => {
+      previousFocus = document.activeElement as HTMLElement | null;
+      modal.classList.add('is-visible');
+      modal.setAttribute('aria-hidden', 'false');
+      modal.removeAttribute('inert');
+      closeButton.focus({ preventScroll: true });
+    }, 5_000);
+
+    closeButton.addEventListener('click', () => closeModal());
+    ctaButton.addEventListener('click', () => closeModal({ returnFocus: false }));
+    modal.addEventListener('click', (event) => {
+      if (event.target === modal) closeModal();
+    });
+    document.addEventListener('keydown', (event) => {
+      if (event.key === 'Escape' && modal.classList.contains('is-visible')) closeModal();
+    });
+  }
+</script>

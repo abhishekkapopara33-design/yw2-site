@@ -1,0 +1,240 @@
+---
+const contactApiUrl = import.meta.env.PUBLIC_CONTACT_API_URL
+  ?? 'https://gjtn9lelk3.execute-api.us-east-1.amazonaws.com/default/yw2-contact-form';
+---
+
+<section aria-labelledby="contact-heading" class="section contact cta-section" id="contact">
+<div class="container">
+<div class="cta-section__inner">
+<div class="cta-section__copy">
+<span class="section-tag section-tag--light">Free, No Obligation</span>
+<h2 class="cta-section__title" id="contact-heading">Ready to Rank #1 in Your City?</h2>
+<p class="cta-section__sub">Fill out the form and we'll deliver your personalized SEO audit within 48 hours — for free. No sales pressure. No BS.</p>
+<div class="cta-promises">
+<div class="promise">✓ Free detailed SEO audit</div>
+<div class="promise">✓ Response within 24 hours</div>
+<div class="promise">✓ No commitment required</div>
+</div>
+</div>
+<div class="cta-section__form-wrap">
+<form aria-label="Free SEO Audit Request Form" class="contact-form" id="contact-form" data-api-url={contactApiUrl} novalidate="">
+<div class="form-row">
+<div class="form-group">
+<label class="form-label" for="field-name">Your Name <span aria-label="required" class="required">*</span></label>
+<input aria-required="true" autocomplete="name" class="form-input" id="field-name" maxlength="100" name="name" placeholder="John Smith" required="" type="text"/>
+<span aria-live="polite" class="form-error" id="error-name" role="alert"></span>
+</div>
+<div class="form-group">
+<label class="form-label" for="field-email">Email Address <span aria-label="required" class="required">*</span></label>
+<input aria-required="true" autocomplete="email" class="form-input" id="field-email" maxlength="254" name="email" placeholder="john@mybusiness.com" required="" type="email"/>
+<span aria-live="polite" class="form-error" id="error-email" role="alert"></span>
+</div>
+</div>
+<div class="form-row">
+<div class="form-group">
+<label class="form-label" for="field-phone">Phone Number</label>
+<input autocomplete="tel" class="form-input" id="field-phone" maxlength="20" name="phone" placeholder="(555) 555-5555" type="tel"/>
+</div>
+<div class="form-group">
+<label class="form-label" for="field-city">Your City <span aria-label="required" class="required">*</span></label>
+<input aria-required="true" class="form-input" id="field-city" maxlength="100" name="city" placeholder="Austin, TX" required="" type="text"/>
+<span aria-live="polite" class="form-error" id="error-city" role="alert"></span>
+</div>
+</div>
+<div class="form-group">
+<label class="form-label" for="field-website">Your Website URL</label>
+<input autocomplete="url" class="form-input" id="field-website" maxlength="200" name="website" placeholder="https://mybusiness.com" type="url"/>
+<span aria-live="polite" class="form-error" id="error-website" role="alert"></span>
+</div>
+<div class="form-group">
+<label class="form-label" for="field-type">Business Type <span aria-label="required" class="required">*</span></label>
+<select aria-required="true" class="form-input form-select" id="field-type" name="business_type" required="">
+<option disabled="" selected="" value="">Select your industry…</option>
+<option value="plumbing">Plumbing</option>
+<option value="hvac">HVAC</option>
+<option value="auto-repair">Auto Repair</option>
+<option value="restaurant">Restaurant / Food</option>
+<option value="salon">Salon / Beauty</option>
+<option value="dental">Dental / Medical</option>
+<option value="legal">Legal / Law</option>
+<option value="landscaping">Landscaping</option>
+<option value="roofing">Roofing</option>
+<option value="electrical">Electrical</option>
+<option value="retail">Retail Shop</option>
+<option value="other">Other</option>
+</select>
+<span aria-live="polite" class="form-error" id="error-type" role="alert"></span>
+</div>
+<button class="btn btn--primary btn--full btn--lg" id="form-submit-btn" type="submit">
+                Send My Free Audit Request
+              </button>
+<p class="form-privacy">🔒 Your information is private. We never share or sell your data.</p>
+</form>
+<div aria-live="polite" class="form-success" hidden="" id="form-success" role="status">
+<div aria-hidden="true" class="success-icon">✓</div>
+<h3>Audit Request Received!</h3>
+<p>We'll have your personalized SEO audit delivered to your inbox within 48 hours.</p>
+<button class="btn btn--outline" id="form-reset-btn" type="button">Submit Another Request</button>
+</div>
+</div>
+</div>
+</div>
+</section>
+
+<script>
+  const form = document.querySelector<HTMLFormElement>('#contact-form');
+  const success = document.querySelector<HTMLElement>('#form-success');
+  const submitButton = document.querySelector<HTMLButtonElement>('#form-submit-btn');
+  const resetButton = document.querySelector<HTMLButtonElement>('#form-reset-btn');
+
+  const fields = {
+    name: document.querySelector<HTMLInputElement>('#field-name'),
+    email: document.querySelector<HTMLInputElement>('#field-email'),
+    city: document.querySelector<HTMLInputElement>('#field-city'),
+    website: document.querySelector<HTMLInputElement>('#field-website'),
+    businessType: document.querySelector<HTMLSelectElement>('#field-type'),
+  };
+
+  const setError = (input: HTMLInputElement | HTMLSelectElement | null, errorId: string, message: string) => {
+    const error = document.getElementById(errorId);
+    if (!input || !error) return;
+    input.classList.add('error');
+    input.setAttribute('aria-describedby', errorId);
+    error.textContent = message;
+  };
+
+  const clearError = (input: HTMLInputElement | HTMLSelectElement | null, errorId: string) => {
+    const error = document.getElementById(errorId);
+    if (!input || !error) return;
+    input.classList.remove('error');
+    input.removeAttribute('aria-describedby');
+    error.textContent = '';
+  };
+
+  const validate = () => {
+    let valid = true;
+    const values = {
+      name: fields.name?.value.trim() ?? '',
+      email: fields.email?.value.trim() ?? '',
+      city: fields.city?.value.trim() ?? '',
+      website: fields.website?.value.trim() ?? '',
+      businessType: fields.businessType?.value ?? '',
+    };
+
+    Object.entries({
+      name: ['error-name', fields.name],
+      email: ['error-email', fields.email],
+      city: ['error-city', fields.city],
+      website: ['error-website', fields.website],
+      businessType: ['error-type', fields.businessType],
+    }).forEach(([, [errorId, input]]) => clearError(input as HTMLInputElement | HTMLSelectElement, errorId as string));
+
+    if (!values.name) {
+      setError(fields.name, 'error-name', 'Please enter your name.');
+      valid = false;
+    } else if (values.name.length > 100) {
+      setError(fields.name, 'error-name', 'Name must be 100 characters or fewer.');
+      valid = false;
+    }
+
+    if (!values.email) {
+      setError(fields.email, 'error-email', 'Please enter your email address.');
+      valid = false;
+    } else if (!/^[^\s@]{1,64}@[^\s@]{1,253}\.[^\s@]{2,}$/.test(values.email)) {
+      setError(fields.email, 'error-email', 'Please enter a valid email address.');
+      valid = false;
+    }
+
+    if (!values.city) {
+      setError(fields.city, 'error-city', 'Please enter your city.');
+      valid = false;
+    }
+
+    if (values.website) {
+      try {
+        const url = new URL(values.website);
+        if (!['http:', 'https:'].includes(url.protocol)) throw new Error('Unsupported protocol');
+      } catch {
+        setError(fields.website, 'error-website', 'Please enter a valid URL, such as https://mybusiness.com.');
+        valid = false;
+      }
+    }
+
+    if (!values.businessType) {
+      setError(fields.businessType, 'error-type', 'Please select your business type.');
+      valid = false;
+    }
+
+    return valid;
+  };
+
+  const restoreForm = () => {
+    success?.setAttribute('hidden', '');
+    form?.removeAttribute('hidden');
+    if (submitButton) {
+      submitButton.disabled = false;
+      submitButton.textContent = 'Send My Free Audit Request';
+    }
+    fields.name?.focus();
+  };
+
+  if (form && success && submitButton) {
+    const clearOnInput = (
+      field: HTMLInputElement | HTMLSelectElement | null,
+      errorId: string,
+    ) => {
+      field?.addEventListener('input', () => clearError(field, errorId));
+    };
+
+    clearOnInput(fields.name, 'error-name');
+    clearOnInput(fields.email, 'error-email');
+    clearOnInput(fields.city, 'error-city');
+    clearOnInput(fields.website, 'error-website');
+    clearOnInput(fields.businessType, 'error-type');
+
+    form.addEventListener('submit', async (event) => {
+      event.preventDefault();
+      if (!validate()) return;
+
+      const endpoint = form.dataset.apiUrl;
+      if (!endpoint) {
+        window.alert('The contact form is not configured. Please call or email YW2 LLC.');
+        return;
+      }
+
+      submitButton.disabled = true;
+      submitButton.textContent = 'Sending…';
+
+      const controller = new AbortController();
+      const timeout = window.setTimeout(() => controller.abort(), 15_000);
+
+      try {
+        const data = Object.fromEntries(new FormData(form).entries());
+        const response = await fetch(endpoint, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(data),
+          cache: 'no-store',
+          signal: controller.signal,
+        });
+
+        if (!response.ok) throw new Error(`Contact API returned ${response.status}`);
+
+        form.reset();
+        form.setAttribute('hidden', '');
+        success.removeAttribute('hidden');
+        success.setAttribute('tabindex', '-1');
+        success.focus();
+      } catch (error) {
+        console.error('Contact form submission failed:', error);
+        window.alert('There was an error sending your request. Please try again or call (518) 227-1040.');
+        submitButton.disabled = false;
+        submitButton.textContent = 'Send My Free Audit Request';
+      } finally {
+        window.clearTimeout(timeout);
+      }
+    });
+
+    resetButton?.addEventListener('click', restoreForm);
+  }
+</script>

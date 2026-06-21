@@ -1,0 +1,58 @@
+<footer class="footer" role="contentinfo">
+<div class="container footer__inner">
+<div class="footer__brand">
+<a aria-label="YW2 Home" class="navbar__logo" href="#hero">
+<span class="logo-brand">YW2</span><span class="logo-tagline">Your Web Your Way</span>
+</a>
+<p class="footer__tagline">Veteran-owned web, software, and AI consulting for local businesses ready to grow.</p>
+<div aria-label="Social media links" class="footer__social" role="list">
+<a aria-label="Follow us on LinkedIn" class="social-link" href="#" rel="noopener" role="listitem">in</a>
+<a aria-label="Follow us on Facebook" class="social-link" href="#" rel="noopener" role="listitem">f</a>
+<a aria-label="Follow us on X (Twitter)" class="social-link" href="#" rel="noopener" role="listitem">𝕏</a>
+</div>
+</div>
+<nav aria-label="Footer navigation" class="footer__nav">
+<div class="footer__col">
+<h4 class="footer__col-title">Services</h4>
+<ul role="list">
+<li><a href="#services">Local SEO</a></li>
+<li><a href="#services">AI-Powered SEO</a></li>
+<li><a href="#services">Website Redesign</a></li>
+<li><a href="#services">Google Business Profile</a></li>
+<li><a href="#services">Review Management</a></li>
+</ul>
+</div>
+<div class="footer__col">
+<h4 class="footer__col-title">Company</h4>
+<ul role="list">
+<li><a href="#why-us">Why Us</a></li>
+<li><a href="#process">Our Process</a></li>
+<li><a href="#pricing">Pricing</a></li>
+<li><a href="#faq">FAQ</a></li>
+</ul>
+</div>
+<div class="footer__col">
+<h4 class="footer__col-title">Contact</h4>
+<ul role="list">
+<li><a href="#contact">Free Audit</a></li>
+<li><a href="mailto:contact@yw2llc.com">contact@yw2llc.com</a></li>
+<li><a href="tel:+15182271040">(518) 227-1040</a></li>
+</ul>
+</div>
+</nav>
+</div>
+<div class="footer__bottom">
+<div class="container footer__bottom-inner">
+<p>© <span id="footer-year"></span> YW2 — Your Web Your Way. All rights reserved.</p>
+<div class="footer__legal">
+<a href="#">Privacy Policy</a>
+<a href="#">Terms of Service</a>
+</div>
+</div>
+</div>
+</footer>
+
+<script>
+  const year = document.querySelector<HTMLElement>('#footer-year');
+  if (year) year.textContent = String(new Date().getFullYear());
+</script>

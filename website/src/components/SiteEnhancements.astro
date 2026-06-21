@@ -1,0 +1,46 @@
+<script>
+  const revealTargets = [
+    '.service-card',
+    '.why-card',
+    '.process-step',
+    '.pricing-card',
+    '.faq-item',
+    '.section-header',
+  ];
+
+  revealTargets.forEach((selector) => {
+    document.querySelectorAll<HTMLElement>(selector).forEach((element, index) => {
+      element.classList.add('reveal');
+      const delay = Math.min(index, 5);
+      if (delay > 0) element.classList.add(`reveal-delay-${delay}`);
+    });
+  });
+
+  const revealElements = document.querySelectorAll<HTMLElement>('.reveal');
+  if ('IntersectionObserver' in window && !window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (!entry.isIntersecting) return;
+        entry.target.classList.add('visible');
+        observer.unobserve(entry.target);
+      });
+    }, { threshold: 0.12, rootMargin: '0px 0px -40px 0px' });
+
+    revealElements.forEach((element) => observer.observe(element));
+  } else {
+    revealElements.forEach((element) => element.classList.add('visible'));
+  }
+
+  if (!CSS.supports('scroll-behavior', 'smooth')) {
+    document.querySelectorAll<HTMLAnchorElement>('a[href^="#"]').forEach((anchor) => {
+      anchor.addEventListener('click', (event) => {
+        const targetSelector = anchor.getAttribute('href');
+        if (!targetSelector || targetSelector === '#') return;
+        const target = document.querySelector(targetSelector);
+        if (!target) return;
+        event.preventDefault();
+        target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      });
+    });
+  }
+</script>

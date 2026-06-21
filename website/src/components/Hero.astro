@@ -1,0 +1,148 @@
+---
+const introVideoUrl = import.meta.env.PUBLIC_HERO_INTRO_VIDEO_URL
+  ?? 'https://d1td79ts94gosl.cloudfront.net/videos/video-1-funny.mp4';
+const loopVideoUrl = import.meta.env.PUBLIC_HERO_LOOP_VIDEO_URL
+  ?? 'https://d1td79ts94gosl.cloudfront.net/videos/hero_video.mp4';
+---
+
+<section aria-labelledby="hero-heading" class="hero" id="hero">
+<!-- Video Background -->
+<div class="hero__bg-video">
+<video autoplay="" data-intro-src={introVideoUrl} data-loop-src={loopVideoUrl} id="bg-video" muted="" playsinline="" preload="metadata"></video>
+<!-- Overlay with grid pattern for readability and aesthetics -->
+<div class="hero__bg-overlay"></div>
+<div aria-hidden="true" class="hero__bg-grid"></div>
+</div>
+<div class="container hero__inner">
+<div class="hero__content">
+<div class="hero__badge">
+<span aria-hidden="true" class="badge-dot"></span>
+            #1 Local SEO Agency for Small Businesses
+          </div>
+<h1 class="hero__headline" id="hero-heading">
+            Dominate Local Search.<br/>
+<span class="text-gradient">Get Found. Grow Faster.</span>
+</h1>
+<p class="hero__sub">
+            We help plumbers, mechanics, shopkeepers, and every local business owner
+            rank higher on Google, attract more customers, and build a brand that lasts —
+            with proven SEO and cutting-edge AI-SEO strategies.
+          </p>
+<div class="hero__ctas">
+<a class="btn btn--primary btn--lg" href="#contact" id="hero-cta-primary">Get My Free SEO Audit</a>
+<a class="btn btn--ghost btn--lg" href="#services" id="hero-cta-secondary">
+              Explore Our Services
+              <svg aria-hidden="true" fill="none" height="16" viewBox="0 0 16 16" width="16">
+<path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+</svg>
+</a>
+</div>
+</div>
+<div aria-hidden="true" class="hero__visual">
+<div class="rank-card rank-card--1">
+<div class="rank-card__icon">🏆</div>
+<div class="rank-card__text">
+<strong>Mike's Plumbing</strong>
+<span>#1 on Google Maps</span>
+</div>
+</div>
+<div class="rank-card rank-card--2">
+<div class="rank-card__icon">📈</div>
+<div class="rank-card__text">
+<strong>Traffic Up 287%</strong>
+<span>In 90 days</span>
+</div>
+</div>
+<div class="rank-card rank-card--3">
+<div class="rank-card__icon">⭐</div>
+<div class="rank-card__text">
+<strong>42 New Reviews</strong>
+<span>This month</span>
+</div>
+</div>
+<div class="hero__phone-mockup">
+<div class="phone-screen">
+<div class="phone-search-bar">
+<span aria-hidden="true" class="search-icon">🔍</span>
+<span class="search-text">plumber near me</span>
+</div>
+<div class="phone-result phone-result--ad">Ad</div>
+<div class="phone-result phone-result--top">
+<div aria-hidden="true" class="result-favicon">🔧</div>
+<div class="result-info">
+<span class="result-title">Mike's Plumbing Co.</span>
+<span class="result-url">mikesplumbing.com</span>
+<span class="result-stars">★★★★★ (148)</span>
+</div>
+</div>
+<div class="phone-result">
+<div aria-hidden="true" class="result-favicon">🔩</div>
+<div class="result-info">
+<span class="result-title">City Pipe Pros</span>
+<span class="result-url">citypipepros.com</span>
+<span class="result-stars muted">★★★☆☆ (12)</span>
+</div>
+</div>
+<div class="phone-result">
+<div aria-hidden="true" class="result-favicon">🛠️</div>
+<div class="result-info">
+<span class="result-title">Quick Fix Plumbers</span>
+<span class="result-url">quickfixplumb.com</span>
+<span class="result-stars muted">★★★★☆ (29)</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</section>
+
+<script>
+  const video = document.querySelector<HTMLVideoElement>('#bg-video');
+
+  if (video) {
+    const introSource = video.dataset.introSrc;
+    const loopSource = video.dataset.loopSrc;
+    const storageKey = 'bgVideoFunnyClipPlayed';
+
+    const hasSeenIntro = () => {
+      try {
+        return localStorage.getItem(storageKey) === 'true';
+      } catch {
+        return false;
+      }
+    };
+
+    const markIntroSeen = () => {
+      try {
+        localStorage.setItem(storageKey, 'true');
+      } catch {
+        // Storage may be unavailable in private browsing or hardened browsers.
+      }
+    };
+
+    const playSource = async (source: string, loop: boolean) => {
+      video.loop = loop;
+      video.src = source;
+      video.load();
+
+      try {
+        await video.play();
+      } catch (error) {
+        console.warn('Background video autoplay was unavailable:', error);
+      }
+    };
+
+    if (loopSource) {
+      if (introSource && !hasSeenIntro()) {
+        video.addEventListener('ended', () => {
+          markIntroSeen();
+          void playSource(loopSource, true);
+        }, { once: true });
+        void playSource(introSource, false);
+      } else {
+        void playSource(loopSource, true);
+      }
+    }
+  }
+</script>
